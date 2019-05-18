@@ -3,7 +3,7 @@ var context = canvas.getContext('2d');
 
 /***全屏canvas***/
 autoSetCanvasSize(canvas);
-listenToMouse(canvas);
+listenToUser(canvas);
 
 
 
@@ -49,37 +49,71 @@ function autoSetCanvasSize(canvas){
     }
 }
 
-function listenToMouse(canvas){
+function listenToUser(canvas){
     var context = canvas.getContext('2d');
 
     var using = false;
     var lastPoint = {'x':undefined,'y':undefined};
-    canvas.onmousedown = function(e){
-        var x = e.clientX;
-        var y = e.clientY;
-        using = true;
-        if(eraserEnabled){
-            context.clearRect(x-5,y-5,10,10);
-        }else{
-            lastPoint={'x':x,'y':y};
-        }
-    }
 
-    canvas.onmousemove = function(a){
-        var x = a.clientX;
-        var y = a.clientY;
-        if(!using){return;}
-        if(eraserEnabled){
-            context.clearRect(x-5,y-5,10,10);
-        }else{
-            var newPoint = {'x':x,'y':y};
-            paintLine(lastPoint.x,lastPoint.y,x,y);
-            lastPoint = newPoint;
+    if(document.body.ontouchstart !== undefined){
+        //触屏设备
+        canvas.ontouchstart = function(e){
+            var x = e.touches[0].clientX;
+            var y = e.touches[0].clientY;
+            using = true;
+            if(eraserEnabled){
+                context.clearRect(x-5,y-5,10,10);
+            }else{
+                lastPoint={'x':x,'y':y};
+            }
         }
-    }
 
-    canvas.onmouseup = function(a){
-        using = false;
+        canvas.ontouchmove = function(a){
+            var x = a.touches[0].clientX;
+            var y = a.touches[0].clientY;
+            if(!using){return;}
+            if(eraserEnabled){
+                context.clearRect(x-5,y-5,10,10);
+            }else{
+                var newPoint = {'x':x,'y':y};
+                paintLine(lastPoint.x,lastPoint.y,x,y);
+                lastPoint = newPoint;
+            }
+        }
+
+        canvas.ontouchend = function(a){
+            using = false;
+        }
+
+    }else{
+        //非触屏设备
+        canvas.onmousedown = function(e){
+            var x = e.clientX;
+            var y = e.clientY;
+            using = true;
+            if(eraserEnabled){
+                context.clearRect(x-5,y-5,10,10);
+            }else{
+                lastPoint={'x':x,'y':y};
+            }
+        }
+
+        canvas.onmousemove = function(a){
+            var x = a.clientX;
+            var y = a.clientY;
+            if(!using){return;}
+            if(eraserEnabled){
+                context.clearRect(x-5,y-5,10,10);
+            }else{
+                var newPoint = {'x':x,'y':y};
+                paintLine(lastPoint.x,lastPoint.y,x,y);
+                lastPoint = newPoint;
+            }
+        }
+
+        canvas.onmouseup = function(a){
+            using = false;
+        }
     }
 
 }
