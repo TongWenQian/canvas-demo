@@ -1,5 +1,6 @@
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
+var lineWidth = 5;
 
 /***全屏canvas***/
 autoSetCanvasSize(canvas);
@@ -9,13 +10,53 @@ listenToUser(canvas);
 
 /***橡皮擦***/
 var eraserEnabled = false;
-eraser.onclick = function(){
-    eraserEnabled =true;
-    actions.className = 'actions x';
-}
-brush.onclick = function(){
+pen.onclick = function () {
     eraserEnabled = false;
-    actions.className = 'actions';
+    pen.classList.add('active');
+    eraser.classList.remove('active');
+}
+eraser.onclick = function () {
+    eraserEnabled = true;
+    eraser.classList.add('active');
+    pen.classList.remove('active');
+}
+/**/
+red.onclick = function () {
+    context.strokeStyle = '#ff484f';
+    red.classList.add('active');
+    green.classList.remove('active');
+    blue.classList.remove('active');
+}
+green.onclick = function () {
+    context.strokeStyle = '#a0ff8d';
+    green.classList.add('active');
+    red.classList.remove('active');
+    blue.classList.remove('active');
+}
+blue.onclick = function (){
+    context.strokeStyle = '#7277ff';
+    blue.classList.add('active');
+    green.classList.remove('active');
+    red.classList.remove('active');
+}
+
+thin.onclick = function () {
+    lineWidth = 5;
+}
+thick.onclick = function () {
+    lineWidth = 10;
+}
+clear.onclick = function () {
+    context.clearRect(0,0,canvas.width,canvas.height);
+}
+save.onclick = function () {
+    var url = canvas.toDataURL('image/png');
+    var a = document.createElement('a');
+    document.body.appendChild(a);
+    a.href = url;
+    a.download = '我的画';
+    a.target = '_blank';
+    a.click();
 }
 
 
@@ -28,9 +69,8 @@ function drawCircle(x,y,radius){
 
 function paintLine(x1,y1,x2,y2){
     context.beginPath();
-    context.strokeStyle='black';
     context.moveTo(x1,y1);
-    context.lineWidth=5;
+    context.lineWidth=lineWidth;
     context.lineTo(x2,y2);
     context.stroke();
     context.closePath();
@@ -49,6 +89,7 @@ function autoSetCanvasSize(canvas){
     }
 }
 
+/**/
 function listenToUser(canvas){
     var context = canvas.getContext('2d');
 
@@ -95,6 +136,7 @@ function listenToUser(canvas){
                 context.clearRect(x-5,y-5,10,10);
             }else{
                 lastPoint={'x':x,'y':y};
+                drawCircle(x,y,1);
             }
         }
 
@@ -106,6 +148,7 @@ function listenToUser(canvas){
                 context.clearRect(x-5,y-5,10,10);
             }else{
                 var newPoint = {'x':x,'y':y};
+                drawCircle(x,y,1);
                 paintLine(lastPoint.x,lastPoint.y,x,y);
                 lastPoint = newPoint;
             }
