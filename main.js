@@ -44,7 +44,7 @@ thin.onclick = function () {
     lineWidth = 5;
 }
 thick.onclick = function () {
-    lineWidth = 10;
+    lineWidth = 8;
 }
 clear.onclick = function () {
     context.clearRect(0,0,canvas.width,canvas.height);
